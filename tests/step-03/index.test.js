@@ -1,5 +1,5 @@
-const readCSV = require("../../src/csvReader");
-const { parseQuerytest4 } = require("../../src/queryParser");
+const { readCSV } = require("../../src/csvReader");
+const { parseQuery } = require("../../src/queryParser");
 
 test("Read CSV File", async () => {
   const data = await readCSV("./sample.csv");
@@ -11,9 +11,18 @@ test("Read CSV File", async () => {
 
 test("Parse SQL Query", () => {
   const query = "SELECT id, name FROM sample";
-  const parsed = parseQuerytest4(query);
+  const parsed = parseQuery(query);
   expect(parsed).toEqual({
     fields: ["id", "name"],
     table: "sample",
+    whereClauses: [],
+    joinCondition: null,
+    joinTable: null,
+    joinType: null,
+    groupByFields: null,
+    hasAggregateWithoutGroupBy: false,
+    orderByFields: null,
+    limit: null,
+    isDistinct: false,
   });
 });

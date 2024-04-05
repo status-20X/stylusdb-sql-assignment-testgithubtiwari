@@ -1,14 +1,6 @@
-const readCSV = require("../../src/csvReader");
-const {
-  queryParsertest1,
-  queryParsertest2,
-  queryParsertest3,
-} = require("./parsequerytest6");
-const {
-  executesqlquery1,
-  executesqlquery2,
-  executesqlquery3,
-} = require("./executesqlquery6");
+const { readCSV } = require("../../src/csvReader");
+const { parseQuery } = require("../../src/queryParser");
+const { executeSELECTQuery } = require("../../src/index");
 
 test("Read CSV File", async () => {
   const data = await readCSV("./sample.csv");
@@ -20,17 +12,25 @@ test("Read CSV File", async () => {
 
 test("Parse SQL Query", () => {
   const query = "SELECT id, name FROM sample";
-  const parsed = queryParsertest1(query);
+  const parsed = parseQuery(query);
   expect(parsed).toEqual({
     fields: ["id", "name"],
     table: "sample",
     whereClauses: [],
+    joinCondition: null,
+    joinTable: null,
+    joinType: null,
+    groupByFields: null,
+    hasAggregateWithoutGroupBy: false,
+    orderByFields: null,
+    limit: null,
+    isDistinct: false,
   });
 });
 
 test("Execute SQL Query", async () => {
   const query = "SELECT id, name FROM sample";
-  const result = await executesqlquery1(query);
+  const result = await executeSELECTQuery(query);
   expect(result.length).toBeGreaterThan(0);
   expect(result[0]).toHaveProperty("id");
   expect(result[0]).toHaveProperty("name");
@@ -40,7 +40,7 @@ test("Execute SQL Query", async () => {
 
 test("Parse SQL Query with WHERE Clause", () => {
   const query = "SELECT id, name FROM sample WHERE age = 25";
-  const parsed = queryParsertest2(query);
+  const parsed = parseQuery(query);
   expect(parsed).toEqual({
     fields: ["id", "name"],
     table: "sample",
@@ -51,12 +51,20 @@ test("Parse SQL Query with WHERE Clause", () => {
         value: "25",
       },
     ],
+    joinCondition: null,
+    joinTable: null,
+    joinType: null,
+    groupByFields: null,
+    hasAggregateWithoutGroupBy: false,
+    orderByFields: null,
+    limit: null,
+    isDistinct: false,
   });
 });
 
 test("Execute SQL Query with WHERE Clause", async () => {
   const query = "SELECT id, name FROM sample WHERE age = 25";
-  const result = await executesqlquery2(query);
+  const result = await executeSELECTQuery(query);
   expect(result.length).toBe(1);
   expect(result[0]).toHaveProperty("id");
   expect(result[0]).toHaveProperty("name");
@@ -65,7 +73,7 @@ test("Execute SQL Query with WHERE Clause", async () => {
 
 test("Parse SQL Query with Multiple WHERE Clauses", () => {
   const query = "SELECT id, name FROM sample WHERE age = 30 AND name = John";
-  const parsed = queryParsertest3(query);
+  const parsed = parseQuery(query);
   expect(parsed).toEqual({
     fields: ["id", "name"],
     table: "sample",
@@ -81,12 +89,20 @@ test("Parse SQL Query with Multiple WHERE Clauses", () => {
         value: "John",
       },
     ],
+    joinCondition: null,
+    joinTable: null,
+    joinType: null,
+    groupByFields: null,
+    hasAggregateWithoutGroupBy: false,
+    orderByFields: null,
+    limit: null,
+    isDistinct: false,
   });
 });
 
 test("Execute SQL Query with Multiple WHERE Clause", async () => {
   const query = "SELECT id, name FROM sample WHERE age = 30 AND name = John";
-  const result = await executesqlquery3(query);
+  const result = await executeSELECTQuery(query);
   expect(result.length).toBe(1);
   expect(result[0]).toEqual({ id: "1", name: "John" });
 });
